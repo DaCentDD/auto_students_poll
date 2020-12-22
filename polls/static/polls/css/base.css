@@ -1,0 +1,19 @@
+@media (min-width: 768px) {
+    .h-md-100 { height: 100vh; }
+}
+.btn-round { border-radius: 30px; }
+.bg-indigo { background: indigo; }
+.text-cyan { color: #35bdff; }
+
+
+header a {
+    float: right;
+}
+header h2 {
+    width: 10%;
+    margin-left: 2%;
+}
+
+header {
+    height: 7%;
+}

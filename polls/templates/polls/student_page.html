@@ -1,0 +1,7 @@
+{% extends "polls/base.html" %}
+{% block title %}Student{% endblock %}
+{% block content %}
+<h1>Ура</h1>
+<p>Получилось зайти в студентку!</p>
+<a href={% url 'accounts:logout' %}>Выйти</a>
+{% endblock %}
