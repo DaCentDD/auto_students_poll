@@ -12,13 +12,12 @@ class Poll(models.Model):
         )
     active_from = models.DateTimeField(default=datetime.now)
     active_to = models.DateTimeField()
-    max_attemps = models.IntegerField()
-    time_to_complete = models.TimeField()
-    #number_of_questions = models.IntegerField()
-    assess_2 = models.IntegerField()
-    assess_3 = models.IntegerField()
-    assess_4 = models.IntegerField()
-    assess_5 = models.IntegerField()
+    max_attemps = models.PositiveIntegerField(default=1)
+    time_to_complete = models.PositiveIntegerField()
+    assess_2 = models.PositiveIntegerField()
+    assess_3 = models.PositiveIntegerField()
+    assess_4 = models.PositiveIntegerField()
+    assess_5 = models.PositiveIntegerField()
 
     class Meta:
         ordering = ('active_to',)
@@ -49,7 +48,7 @@ class Question(models.Model):
         related_name='poll_question'
     )
     question_text = models.CharField(max_length=100)
-    points_for_question = models.IntegerField()
+    points_for_question = models.PositiveIntegerField()
     many_correct = models.BooleanField(default=False)
 
 

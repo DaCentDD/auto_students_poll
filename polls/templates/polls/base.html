@@ -1,9 +1,7 @@
-
-</html>
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
 	<title>{% block title %}{% endblock %}</title>
@@ -13,6 +11,9 @@
 	<link rel="icon" type="image/png" href="{% static 'accounts/images/icons/favicon.ico' %}" />
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'accounts/vendor/bootstrap/css/bootstrap.min.css' %}">
+
+	<link rel="stylesheet" type="text/css"
+		href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css"
 		href="{% static 'accounts/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
@@ -32,12 +33,13 @@
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'accounts/css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'accounts/css/main.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'polls/css/base.css' %}">
+	{% block style %} {% endblock %}
+
 	<!--===============================================================================================-->
 </head>
 
-<body style="background-color: white;">
-    {% block content %} {% endblock %}
+<body>
+	{% block content %} {% endblock %}
 	<!--===============================================================================================-->
 	<script src="{% static 'accounts/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
 	<!--===============================================================================================-->

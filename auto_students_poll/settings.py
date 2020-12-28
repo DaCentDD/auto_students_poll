@@ -129,7 +129,8 @@ STATICFILES_DIRS = [
 
 AUTH_USER_MODEL = 'accounts.User'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap4',
+
 
 try:
     from .local_settings import *

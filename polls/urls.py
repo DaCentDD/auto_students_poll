@@ -10,5 +10,6 @@ app_name = 'polls'
 urlpatterns = [
     path('', views.main, name='main'),
     path('student_page/', views.student_page, name='student_page'),
-    path('admin_page/', views.admin_page, name='admin_page')
+    path('admin_page/', views.admin_page, name='admin_page'),
+    path('poll/create/', views.poll_create, name='poll_create')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
