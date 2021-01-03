@@ -12,14 +12,22 @@
 
 
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
-    <div class='container' >  
-        <div class='save_btn fa fa-save' onclick='PostDataToDjango()'></div>  
+    {% if form.errors %}
+    <div class='div-errors container'>
+        {% for field, error in form.errors.items %}
+            {{error}}
+        {% endfor%}
+    </div>
+    {% endif%}
+    <div class='container'>
+
+        <div class='save_btn fa fa-save' onclick='PostDataToDjango()'></div>
         <div class='quit_btn'>
             <form action="/admin_page/">
                 <button type="submit" class='fa fa-home'></button>
             </form>
         </div>
-        
+
         <div class='div-form'>
             <form id='tests_form' action="." method="POST" class='test_form'>
                 <div class="group ">
@@ -27,8 +35,8 @@
                     <span class="bar"></span>
                     <label>Название теста</label>
                 </div>
-                
-                
+
+
                 <div class="group ">
                     {{form.author_name}}
                     <span class="bar"></span>
@@ -37,18 +45,18 @@
                 <div class="group ">
                     {{form.active_from}}
                     <span class="bar"></span>
-                    <label>Дата начала</label>
+                    <label>Дата начала (по-умолчанию с даты создания)</label>
                 </div>
                 <div class="group ">
                     {{form.active_to}}
                     <span class="bar"></span>
                     <label>Дата окончания</label>
                 </div>
-               
+
                 <div class="group ">
                     {{form.max_attemps}}
                     <span class="bar"></span>
-                    <label>Количество попыток</label>
+                    <label>Количество попыток (по-умолчанию одна)</label>
                 </div>
                 <div class="group ">
                     {{form.time_to_complete}}
@@ -75,50 +83,46 @@
                     <span class="bar"></span>
                     <label>Баллов на "Отлично"</label>
                 </div>
-                <div style="color: black">
+                <div style="color: black; text-align: left; margin-left: 22%" >
                     Доступно для групп:
-                    <br>
                     {{form.poll_for_group}}
                 </div>
-                
-    
-                
-                
-                
-    
+
+
+
                 <div id='questions_div'>
-    
+
                 </div>
-    
+
                 <br>
-    
+
                 <div class='add_question_btn' onclick='CreateQuestion()'>
                     Добавить вопрос
                 </div>
                 <br>
-                
+
                 {% csrf_token %}
                 <input id='save_hide' type="submit" value='SaveHidden' style='display: none'>
             </form>
-    
+
         </div>
-    
+
     </div>
-    
-    
+
+
     <script>
         function CreateQuestion() {
             var question_div = document.createElement('div');
             question_div.setAttribute('class', 'question_div');
             var question_table = document.createElement('table');
             question_table.style.width = '100%';
-    
+
             var question_row = question_table.insertRow();
             var question_text_cell = question_row.insertCell();
             var question_points_cell = question_row.insertCell();
             var question_remove_question_cell = question_row.insertCell();
             var question_hide_cell = question_row.insertCell();
-    
+
             var question_input = document.createElement('input');
             question_input.setAttribute('id', 'question_' + QUESTION_IDX);
             question_input.setAttribute('type', 'text');
@@ -126,7 +130,7 @@
             question_input.setAttribute('placeholder', 'Введите текст вопроса');
             question_text_cell.style.width = '70%';
             question_text_cell.appendChild(question_input);
-    
+
             var question_points_input = document.createElement('input');
             question_points_input.setAttribute('id', 'point_' + QUESTION_IDX);
             question_points_input.setAttribute('type', 'number');
@@ -134,19 +138,19 @@
             question_points_input.setAttribute('placeholder', 'Баллы');
             question_points_cell.style.width = '10%';
             question_points_cell.appendChild(question_points_input);
-    
+
             var remove_question_div = document.createElement('div');
             remove_question_div.innerHTML = 'Удалить';
             remove_question_div.setAttribute('class', 'remove_question_button');
             remove_question_div.setAttribute('onclick', 'RemoveQuestion(' + QUESTION_IDX + ')');
             question_remove_question_cell.style.width = '20%';
             question_remove_question_cell.appendChild(remove_question_div);
-    
+
             var question_input_hide = document.createElement('input');
             question_input_hide.setAttribute('name', 'question_' + QUESTION_IDX);
             question_input_hide.setAttribute('type', 'hidden');
             question_hide_cell.appendChild(question_input_hide);
-    
+
             var answers_row_for_div = question_table.insertRow();
             var answer_cell_for_div = answers_row_for_div.insertCell();
             answer_cell_for_div.style.paddingLeft = '20px';
@@ -156,7 +160,7 @@
             answers_table.style.width = '100%';
             answers_table.setAttribute('id', 'answers_table_' + QUESTION_IDX);
             answer_cell_for_div.appendChild(answers_table);
-    
+
             var answer_row = question_table.insertRow();
             var add_answer_cell = answer_row.insertCell();
             add_answer_cell.setAttribute('colspan', '3');
@@ -165,31 +169,31 @@
             answer_div.setAttribute('class', 'add_answer_btn');
             answer_div.setAttribute('onclick', 'CreateAnswer(' + QUESTION_IDX + ')');
             add_answer_cell.appendChild(answer_div);
-    
+
             question_div.appendChild(question_table);
-    
+
             br = document.createElement('br');
             br.setAttribute('id', 'br_' + QUESTION_IDX);
-    
+
             main_div = document.getElementById('questions_div');
             question_div.appendChild(br);
             main_div.appendChild(question_div);
             main_div.appendChild(br);
             QUESTION_DIVS.push(question_div);
-    
+
             QUESTION_IDX++;
         }
-    
-    
+
+
         function CreateAnswer(question_idx) {
             var question_table = document.getElementById('answers_table_' + question_idx);
-    
+
             var answer_row = question_table.insertRow();
             var answer_text_cell = answer_row.insertCell();
             var answer_correct_cell = answer_row.insertCell();
             var remove_answer_cell = answer_row.insertCell();
             var answer_hide_cell = answer_row.insertCell();
-    
+
             var answer_input = document.createElement('input');
             answer_input.setAttribute('id', 'answer_' + ANSWER_IDX);
             answer_input.setAttribute('type', 'text');
@@ -197,7 +201,7 @@
             answer_input.setAttribute('class', 'answer_name');
             answer_text_cell.appendChild(answer_input);
             answer_text_cell.style.width = '80%'
-    
+
             var correct_checkbox = document.createElement("input");
             correct_checkbox.setAttribute("id", "correct_" + ANSWER_IDX);
             correct_checkbox.setAttribute("type", "checkbox");
@@ -205,45 +209,45 @@
             correct_checkbox.style.width = answer_input.style.height;
             correct_checkbox.style.height = answer_input.style.height;
             answer_correct_cell.appendChild(correct_checkbox);
-    
+
             var remove_answer_div = document.createElement('div');
             remove_answer_div.innerHTML = 'Удалить';
             remove_answer_div.setAttribute('class', 'remove_answer_button');
             remove_answer_div.setAttribute('onclick', 'RemoveAnswer(' + ANSWER_IDX + ')');
             remove_answer_cell.appendChild(remove_answer_div);
             remove_answer_cell.style.width = '20%'
-    
+
             var answer_input_hide = document.createElement('input');
             answer_input_hide.setAttribute('name', 'answer_' + ANSWER_IDX);
             answer_input_hide.setAttribute('type', 'hidden');
             answer_hide_cell.appendChild(answer_input_hide);
-    
+
             ANSWER_ROWS.push(answer_row);
-    
+
             ANSWER_IDX++;
         }
-    
-    
+
+
         function RemoveAnswer(answer_idx) {
             var answer_div = ANSWER_ROWS[answer_idx];
             answer_div.remove();
         }
-    
-    
+
+
         function RemoveQuestion(question_idx) {
             var question_div = QUESTION_DIVS[question_idx];
             question_div.remove();
             document.getElementById('br_' + question_idx).remove();
         }
-    
-    
+
+
         function PostDataToDjango() {
             for (let i = 0; i < ANSWER_ROWS.length; i++) {
                 let answer_row = ANSWER_ROWS[i];
                 let inputs = answer_row.getElementsByTagName('input');
-    
-    
-    
+
+
+
                 let answer_text = '';
                 let correct = '';
                 for (let j = 0; j < inputs.length; j++) {
@@ -257,7 +261,7 @@
                     }
                 }
             }
-    
+
             for (let i = 0; i < QUESTION_DIVS.length; i++) {
                 let question_div = QUESTION_DIVS[i];
                 let inputs = question_div.getElementsByTagName('input');
@@ -274,20 +278,20 @@
                     }
                 }
             }
-    
+
             document.getElementById('save_hide').click()
         }
-    
+
         var QUESTION_IDX = 0;
         var QUESTION_DIVS = [];
-    
+
         var ANSWER_IDX = 0;
         var ANSWER_ROWS = [];
-    
+
         var BUTTONS = [];
-    
+
         var TEST_FORM = document.getElementById('tests_form');
     </script>
-    
+
     {% endblock %}
 </body>
