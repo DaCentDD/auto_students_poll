@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block style %}
-<link rel="stylesheet" type="text/css" href="{% static 'polls/css/groups_menu.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/polls_menu.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock style %}
 
@@ -15,17 +15,22 @@
     <form action="/admin_page" class="home-button">
         <button type="submit" class='fa fa-home'></button>
     </form>
-    <form action="/groups/create/" class="plus-button">
+    <form action="/polls/create" class="plus-button">
         <button type="submit" class='fa fa-plus'></button>
     </form>
-    <div class="header-title">УПРАВЛЕНИЕ ГРУППАМИ</div>
+    <div class="header-title">УПРАВЛЕНИЕ ТЕСТАМИ</div>
 </header>
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
     <div class="container">
         <div class="group-list">
-            {% for group in groups  %}
-            <form action="/groups/group/{{group.id}}">
-                <button type="submit" class="group_button">{{group.group_name}}</button>
+            {% for poll in polls_obj  %}
+            <form action="/polls/poll/{{poll.id}}">
+                <button type="submit" class="group_button" style="width:100%;">
+                Тест: {{poll.poll_name}} <br> 
+                Автор: {{poll.author_name}} <br> 
+                Активен с {{poll.active_from}} <br> 
+                Активен до {{poll.active_to}} <br> 
+                </button>
             </form>
             {% endfor %}
         </div>

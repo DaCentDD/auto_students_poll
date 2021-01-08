@@ -30,7 +30,7 @@
                 form="group_form"></button></div>
 
         <div class='div-form'>
-            <form id='group_form' action="/students/{{student.id}}" method="POST" class='test_form'>
+            <form id='group_form' action="/students/student/{{student.id}}" method="POST" class='test_form'>
                 <div class="group ">
                     {{form.first_name}}
                     <span class="bar"></span>
@@ -58,12 +58,12 @@
             </form>
             <div>
                 <div class='password_btn'>
-                    <form action="/students/{{student.id}}/password">
+                    <form action="/students/student/{{student.id}}/password">
                         <button type="submit">СМЕНИТЬ ПАРОЛЬ</button>
                     </form>
                 </div>
                 <div class='delete_btn'>
-                    <form action="/students/{{student.id}}/delete">
+                    <form action="/students/student/{{student.id}}/delete">
                         <button type="submit">УДАЛИТЬ СТУДЕНТА</button>
                     </form>
                 </div>

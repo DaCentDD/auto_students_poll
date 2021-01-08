@@ -1,0 +1,103 @@
+{% extends 'polls/base.html' %}
+
+{% load static %}
+
+{% block title %}{{poll.poll_name}}{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_create.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    {% if form.errors %}
+    <div class='div-errors container'>
+        {% for field, error in form.errors.items %}
+        {{error}}
+        {% endfor%}
+    </div>
+    {% endif%}
+    <div class='container group-form'>
+        <div class='quit_btn'>
+            <form action="/polls/">
+                <button type="submit" class='fa fa-home'></button>
+            </form>
+        </div>
+        <span style="float:left; margin-left: 35%; font-weight: 1000;">{{form.poll_name}} </span>
+        <div>
+            <button type="submit" class='fa fa-save save_btn' onclick="return confirm('Сохранить изменения?');"
+                form="group_form"></button></div>
+
+        <div class='div-form'>
+            <form id='group_form' action="/polls/poll/{{poll.id}}" method="POST" class='test_form'>
+                <div class="group ">
+                    {{form.poll_name}}
+                    <span class="bar"></span>
+                    <label>Название теста</label>
+                </div>
+                <div class="group ">
+                    {{form.author_name}}
+                    <span class="bar"></span>
+                    <label>Имя автора</label>
+                </div>
+                <div class="group ">
+                    {{form.active_to}}
+                    <span class="bar"></span>
+                    <label>Дата окончания</label>
+                </div>
+
+                <div class="group ">
+                    {{form.max_attemps}}
+                    <span class="bar"></span>
+                    <label>Количество попыток (по-умолчанию одна)</label>
+                </div>
+                <div class="group ">
+                    {{form.time_to_complete}}
+                    <span class="bar"></span>
+                    <label>Время на выполнение (в минутах)</label>
+                </div>
+                <div class="group ">
+                    {{form.assess_2}}
+                    <span class="bar"></span>
+                    <label>Баллов на "Неудовлетворительно"</label>
+                </div>
+                <div class="group ">
+                    {{form.assess_3}}
+                    <span class="bar"></span>
+                    <label>Баллов на "Удовлетворительно"</label>
+                </div>
+                <div class="group ">
+                    {{form.assess_4}}
+                    <span class="bar"></span>
+                    <label>Баллов на "Хорошо"</label>
+                </div>
+                <div class="group ">
+                    {{form.assess_5}}
+                    <span class="bar"></span>
+                    <label>Баллов на "Отлично"</label>
+                </div>
+                <div style="color: black; text-align: left; margin-left: 22%">
+                    Доступно для групп:
+                    {{form.poll_for_group}}
+                </div>
+                <br>
+                <br>
+                {% csrf_token %}
+                <input id='save_hide' type="submit" value='SaveHidden' style='display: none'>
+            </form>
+            <div>
+                <div class='delete_btn' style="width: 100%; border-radius: 0px 0px 10px 10px;">
+                    <form action="/polls/poll/{{poll.id}}/delete">
+                        <button type="submit">УДАЛИТЬ ТЕСТ</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+{% endblock %}

@@ -30,7 +30,7 @@
                 form="group_form"></button></div>
 
         <div class='div-form'>
-            <form id='group_form' action="/groups/{{group.id}}" method="POST" class='test_form'>
+            <form id='group_form' action="/groups/group/{{group.id}}" method="POST" class='test_form'>
                 <div class="group ">
                     {{form.group_name}}
                     <span class="bar"></span>
@@ -48,7 +48,7 @@
             </form>
             <div>
                 <div class='delete_btn' style="width: 100%; border-radius: 0px 0px 10px 10px;">
-                    <form action="/group/{{group.id}}/delete">
+                    <form action="/groups/group/{{group.id}}/delete">
                         <button type="submit">УДАЛИТЬ ГРУППУ</button>
                     </form>
                 </div>

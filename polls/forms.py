@@ -8,6 +8,28 @@ from accounts.models import *
 from .models import *
 
 
+class AnswersForm(forms.ModelForm):
+
+    class Meta:
+        model = Answer
+        fields = [
+            'answer_text',
+            'question_id',
+            'is_right',
+        ]
+
+class QuestionForm(forms.ModelForm):
+
+    class Meta:
+        model = Question
+        fields = [
+            'question_text',
+            'points_for_question',
+            'many_correct',
+            'poll_id'
+        ]
+
+
 class ChangeGroupForm(forms.ModelForm):   
     group_name = forms.CharField(max_length=8, required=False)
     group_student = forms.ModelMultipleChoiceField(
@@ -89,9 +111,9 @@ class ChangeStudentForm(forms.ModelForm):
 
 
 class StudentForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=150, required=False)
-    last_name = forms.CharField(max_length=150, required=False)
-    username = forms.CharField(max_length=150, required=False)
+    first_name = forms.CharField(max_length=15, required=False)
+    last_name = forms.CharField(max_length=15, required=False)
+    username = forms.CharField(max_length=8, required=False)
     password = forms.CharField(
         max_length=128, required=False, widget=forms.PasswordInput)
     repeat_password = forms.CharField(
@@ -162,8 +184,7 @@ class StudentForm(forms.ModelForm):
 class CreateGroupForm(forms.Form):
     group_name = forms.CharField(max_length=8, required=False)
     student_for_group = forms.ModelMultipleChoiceField(
-        queryset=User.objects.exclude(
-            group_id__isnull=False).exclude(is_staff=True),
+        queryset=User.objects.all().exclude(is_staff=True),
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -195,7 +216,7 @@ class PollForm(forms.ModelForm):
     assess_4 = forms.IntegerField(required=False)
     assess_5 = forms.IntegerField(required=False)
     poll_for_group = forms.ModelMultipleChoiceField(
-        queryset=Group.objects.all(),
+        queryset=Group.objects.all().order_by("group_name"),
         widget=forms.CheckboxSelectMultiple,
         required=False)
 

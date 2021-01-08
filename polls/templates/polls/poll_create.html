@@ -11,24 +11,29 @@
 {% block content %}
 
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
-    {% if form.errors %}
+    {% if form.errors or q_and_a_errors%}
     <div class='div-errors container'>
         {% for field, error in form.errors.items %}
-        {{error}}
+            {{error}}
         {% endfor%}
+        {% for error in q_and_a_errors%}
+            {{error}}
+            <br>
+        {%endfor%}
     </div>
     {% endif%}
     <div class='container group-form'>
 
         <div class='save_btn fa fa-save' onclick='PostDataToDjango()'></div>
         <div class='quit_btn'>
-            <form action="/admin_page/">
+            <form action="/polls/">
                 <button type="submit" class='fa fa-home'></button>
             </form>
         </div>
 
         <div class='div-form'>
             <form id='tests_form' action="." method="POST" class='test_form'>
+            {% csrf_token %}
                 <div class="group ">
                     {{form.poll_name}}
                     <span class="bar"></span>
@@ -100,7 +105,7 @@
                 </div>
                 <br>
                 <br>
-                {% csrf_token %}
+        
                 <input id='save_hide' type="submit" value='SaveHidden' style='display: none'>
             </form>
 

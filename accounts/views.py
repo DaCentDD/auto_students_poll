@@ -27,7 +27,7 @@ def user_login(request):
             if request.user.is_staff is True:
                 return redirect('/admin_page')
             else:
-                return redirect('/student_page')
+                return redirect(f'/student_page/{request.user.id}')
         else:
             messages.error(request, "Неверное имя пользователя или пароль")
             return render(request, 'accounts/login.html', {'form': form})

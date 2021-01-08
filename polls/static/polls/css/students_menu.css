@@ -56,8 +56,8 @@ header {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    width: 7em;
-    height: 4em;
+    width: 16em;
+    height: 7em;
     padding: 0.7em;
     margin-bottom: 2%;
     font-size: 2em;
@@ -73,8 +73,8 @@ header {
 }
 
 .group_button:hover {
-    width: 8em;
-    height: 5em;
+    width: 17em;
+    height: 8em;
     background-color: white;
     color: black;
     text-shadow: none;

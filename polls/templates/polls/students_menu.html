@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block style %}
-<link rel="stylesheet" type="text/css" href="{% static 'polls/css/groups_menu.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/students_menu.css' %}">
 {% endblock style %}
 
 {% block content %}
@@ -14,7 +14,7 @@
     <form action="/admin_page/" class="home-button">
         <button type="submit" class='fa fa-home'></button>
     </form>
-    <form action="/student_create" class="plus-button">
+    <form action="/students/create" class="plus-button">
         <button type="submit" class='fa fa-plus'></button>
     </form>
     <div class="header-title">УПРАВЛЕНИЕ СТУДЕНТАМИ</div>
@@ -24,8 +24,11 @@
     <div class="container">
         <div class="group-list">
             {% for student in students  %}
-            <form action="/students/{{student.id}}">
-                <button type="submit" class="group_button">{{student.username}}</button>
+            <form action="/students/student/{{student.id}}">
+                <button type="submit" class="group_button">
+                {{student.get_full_name}} <br>
+                {{student.username}}
+                </button>
             </form>
             {% endfor %}
         </div>

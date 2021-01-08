@@ -57,7 +57,7 @@ header {
     -webkit-border-radius: 5px;
     border-radius: 5px;
     width: 7em;
-    height: 4em;
+    height: 8em;
     padding: 0.7em;
     margin-bottom: 2%;
     font-size: 2em;
@@ -67,14 +67,16 @@ header {
     transition: all 0.2s ease-out;
     text-decoration: none;
     color: white;
-    display: inline-block;
+    display: block;
     cursor: pointer;
     text-shadow: 1px 1px 2px black;
+    text-align: left;
+    padding-left: 20%;
 }
 
 .group_button:hover {
     width: 8em;
-    height: 5em;
+    height: 9em;
     background-color: white;
     color: black;
     text-shadow: none;
@@ -85,7 +87,7 @@ header {
 }
 
 .group-list form {
-    display: inline-block;
+    display: block;
     margin: 3%;
     text-align: center;
 }
