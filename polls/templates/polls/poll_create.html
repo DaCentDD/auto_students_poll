@@ -5,21 +5,20 @@
 {% block title %}Добавить тест{% endblock %}
 
 {% block style %}
-<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_create.css' %}">{% endblock %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_create.css' %}">
+{% endblock %}
+
 {% block content %}
-
-
 
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
     {% if form.errors %}
     <div class='div-errors container'>
         {% for field, error in form.errors.items %}
-            {{error}}
+        {{error}}
         {% endfor%}
     </div>
     {% endif%}
-    <div class='container'>
+    <div class='container group-form'>
 
         <div class='save_btn fa fa-save' onclick='PostDataToDjango()'></div>
         <div class='quit_btn'>
@@ -83,7 +82,7 @@
                     <span class="bar"></span>
                     <label>Баллов на "Отлично"</label>
                 </div>
-                <div style="color: black; text-align: left; margin-left: 22%" >
+                <div style="color: black; text-align: left; margin-left: 22%">
                     Доступно для групп:
                     {{form.poll_for_group}}
                 </div>
@@ -100,7 +99,7 @@
                     Добавить вопрос
                 </div>
                 <br>
-
+                <br>
                 {% csrf_token %}
                 <input id='save_hide' type="submit" value='SaveHidden' style='display: none'>
             </form>

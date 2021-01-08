@@ -1,0 +1,38 @@
+{% extends 'polls/base.html' %}
+{% load static %}
+
+{% block title %}
+Управление студентами
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/groups_menu.css' %}">
+{% endblock style %}
+
+{% block content %}
+<header>
+    <form action="/admin_page/" class="home-button">
+        <button type="submit" class='fa fa-home'></button>
+    </form>
+    <form action="/student_create" class="plus-button">
+        <button type="submit" class='fa fa-plus'></button>
+    </form>
+    <div class="header-title">УПРАВЛЕНИЕ СТУДЕНТАМИ</div>
+</header>
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div class="container">
+        <div class="group-list">
+            {% for student in students  %}
+            <form action="/students/{{student.id}}">
+                <button type="submit" class="group_button">{{student.username}}</button>
+            </form>
+            {% endfor %}
+        </div>
+
+    </div>
+</body>
+
+
+
+{% endblock content %}

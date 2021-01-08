@@ -1,0 +1,82 @@
+{% extends 'polls/base.html' %}
+
+{% load static %}
+
+{% block title %}Добавить студента{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_create.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    {% if form.errors %}
+    <div class='div-errors container'>
+        {% for field, error in form.errors.items %}
+        {{error}}
+        {% endfor%}
+    </div>
+    {% endif%}
+    <div class='container group-form'>
+
+        <div class='quit_btn'>
+            <form action="/students/">
+                <button type="submit" class='fa fa-home'></button>
+            </form>
+        </div>
+
+        <div>
+            <button type="submit" class='fa fa-save save_btn' onclick="return confirm('Добавить нового студента?');"
+                form="group_form"></button></div>
+
+        <div class='div-form'>
+            <form id='group_form' action="." method="POST" class='test_form'>
+                <div class="group ">
+                    {{form.first_name}}
+                    <span class="bar"></span>
+                    <label>Имя студента*</label>
+                </div>
+                <div class="group ">
+                    {{form.last_name}}
+                    <span class="bar"></span>
+                    <label>Фамилия студента*</label>
+                </div>
+                <div class="group ">
+                    {{form.username}}
+                    <span class="bar"></span>
+                    <label>Никнейм студента*</label>
+                </div>
+                <div class="group ">
+                    {{form.password}}
+                    <span class="bar"></span>
+                    <label>Введите пароль*</label>
+                </div>
+                <div class="group ">
+                    {{form.repeat_password}}
+                    <span class="bar"></span>
+                    <label>Подтвердите пароль*</label>
+                </div>
+                <div class="group ">
+                    {{form.email}}
+                    <span class="bar"></span>
+                    <label>Почта студента</label>
+                </div>
+                <div style="text-align:left; margin-left: 20%">
+                    <span style="margin-left:2%; font-weight: 1000;">Группа студента:*</span>
+                    <br>
+                    {{form.group_id}}
+                </div>
+                <br>
+                <br>
+                {% csrf_token %}
+                <input id='save_hide' type="submit" value='SaveHidden' style='display: none'>
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+{% endblock %}

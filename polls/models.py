@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.db import models
 from django.conf import settings
+import django.utils.timezone
+
 
 class Poll(models.Model):
     id = models.AutoField(primary_key=True)
@@ -10,7 +12,7 @@ class Poll(models.Model):
         'accounts.Group', 
         related_name='group_for_poll',
         )
-    active_from = models.DateTimeField(default=datetime.now)
+    active_from = models.DateTimeField(default=django.utils.timezone.now)
     active_to = models.DateTimeField()
     max_attemps = models.PositiveIntegerField(default=1)
     time_to_complete = models.PositiveIntegerField()

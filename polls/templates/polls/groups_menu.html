@@ -1,0 +1,38 @@
+{% extends 'polls/base.html' %}
+{% load static %}
+
+{% block title %}
+Управление группами
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/groups_menu.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock style %}
+
+{% block content %}
+<header>
+    <form action="/admin_page" class="home-button">
+        <button type="submit" class='fa fa-home'></button>
+    </form>
+    <form action="/group_create" class="plus-button">
+        <button type="submit" class='fa fa-plus'></button>
+    </form>
+    <div class="header-title">УПРАВЛЕНИЕ ГРУППАМИ</div>
+</header>
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div class="container">
+        <div class="group-list">
+            {% for group in groups  %}
+            <form action="/groups/{{group.id}}">
+                <button type="submit" class="group_button">{{group.group_name}}</button>
+            </form>
+            {% endfor %}
+        </div>
+        
+    </div>
+</body>
+
+
+
+{% endblock content %}

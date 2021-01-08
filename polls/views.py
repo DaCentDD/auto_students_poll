@@ -2,6 +2,8 @@ from django.http.response import Http404
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 from .forms import *
 from .models import *
@@ -85,3 +87,115 @@ def poll_create(request):
             return render(request, 'polls/poll_create.html', {'form': form})
     form = PollForm()
     return render(request, 'polls/poll_create.html', {'form': form})
+
+
+@login_required(login_url='/login')
+def groups_menu(request):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    groups = Group.objects.all().order_by("group_name")
+    return render(request, 'polls/groups_menu.html', {'groups': groups})
+
+
+@login_required(login_url='/login')
+def group(request, pk):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    group_obj = Group.objects.get(id=pk)
+    if request.method == 'POST':
+        form = ChangeGroupForm(request.POST, instance=group_obj)
+        if form.is_valid():
+            group_obj.group_name = form.cleaned_data["group_name"]
+            group_obj.group_student.set(form.cleaned_data["group_student"])
+            group_obj.save()
+            
+            return redirect("/groups/")  
+    form = ChangeGroupForm(instance=group_obj)
+    form.fields["group_student"].initial = User.objects.filter(group_id = group_obj.id)
+    return render(request, 'polls/group.html', {'form': form, 'group':group_obj})
+    
+
+
+@login_required(login_url='/login')
+def group_create(request):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    if request.method == 'POST':
+        form = CreateGroupForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            group_obj = Group.objects.create(group_name=cd["group_name"])
+            print(cd)
+            for student in cd["student_for_group"]:
+                student_obj = User.objects.get(username=student)
+                student_obj.group_id = group_obj
+                student_obj.save()        
+                return redirect("/groups/")   
+        else:
+            return render(request, 'polls/group_create.html', {'form': form} )
+    form = CreateGroupForm()
+    return render(request, 'polls/group_create.html', {'form': form})
+
+
+@login_required(login_url='/login')
+def student_create(request):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/students/")
+        else:
+            return render(request, 'polls/student_create.html', {'form': form})
+    form = StudentForm()
+    return render(request, 'polls/student_create.html', {'form': form})
+
+
+@login_required(login_url='/login')
+def students_menu(request):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    students = User.objects.exclude(is_staff=True)
+    return render(request, 'polls/students_menu.html', {'students': students})
+
+
+@login_required(login_url='/login')
+def student(request, pk):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    student_obj = User.objects.get(id=pk)
+    if request.method == 'POST':
+        form = ChangeStudentForm(request.POST, instance=student_obj)
+        if form.is_valid():
+            form.save()
+            return redirect("/students/")  
+    form = ChangeStudentForm(instance=student_obj)
+    return render(request, 'polls/student.html', {'form': form, 'student':student_obj})
+
+
+@login_required(login_url='/login')
+def student_delete(request, pk):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    User.objects.get(id=pk).delete()
+    return redirect("/students/")
+
+
+@login_required(login_url='/login')
+def student_password(request, pk):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    student_obj = User.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PasswordStudentForm(request.POST, instance=student_obj)
+        if form.is_valid():
+            new_password = form.cleaned_data["password"]
+            student_obj.set_password(new_password)
+            student_obj.save()
+            return redirect(f"/students/{pk}")
+        else:
+            print("INVALID")
+            return render(request, 'polls/student_password.html', {'form': form, 'student': student_obj})
+    form = PasswordStudentForm()   
+    return render(request, 'polls/student_password.html', {'form': form, 'student': student_obj})

@@ -74,7 +74,7 @@ body {
     -webkit-border-radius: 5px;
     border-radius: 5px;
     width: 30em;
-    height: 10em;
+    height: 8em;
     padding: 0.7em;
     margin-bottom: 2%;
     font-size: 0.5em;
@@ -96,6 +96,7 @@ body {
     border-color: white;
     cursor: pointer;
     text-shadow: 0px 0px 0px black;
+    width: 32em;
 }
 
 .uiux-side.split-pane button:hover,
@@ -211,6 +212,7 @@ body {
     color: white;
     border-color: white;
     cursor: pointer;
+    width: 11em;
 }
 
 .split-pane ul {
@@ -223,3 +225,6 @@ body {
     visibility: visible;
     opacity: 1;
 }
+
+
+

@@ -1,12 +1,184 @@
 from django import forms
-from django.db.models import fields
 from django.core.exceptions import ValidationError
+from django.forms import fields
 from django.utils import timezone
-
-from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 from accounts.models import *
 from .models import *
+
+
+class ChangeGroupForm(forms.ModelForm):   
+    group_name = forms.CharField(max_length=8, required=False)
+    group_student = forms.ModelMultipleChoiceField(
+        queryset=User.objects.exclude(is_staff=True),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    
+    class Meta:
+        model = Group
+        fields = [
+            'group_name',
+            'group_student',
+        ]
+    
+
+class PasswordStudentForm(forms.ModelForm):
+    password = forms.CharField(
+        max_length=128, required=False, widget=forms.PasswordInput)
+    repeat_password = forms.CharField(
+        max_length=128, required=False, widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = [
+            'password',
+        ]
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password", None)
+        if not password:
+            raise ValidationError("- введите пароль")
+        return password
+
+    def clean(self):
+        repeat_password = self.cleaned_data.get("repeat_password", None)
+        password = self.cleaned_data.get("password", None)
+        if repeat_password != password:
+            raise ValidationError("- пароли не совпадают")
+        return self.cleaned_data
+        
+
+class ChangeStudentForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=150, required=False)
+    last_name = forms.CharField(max_length=150, required=False)
+    email = forms.CharField(
+        max_length=254, required=False, widget=forms.EmailInput)
+    group_id = forms.ModelChoiceField(
+        queryset=Group.objects.all().order_by("group_name"),
+        widget=forms.RadioSelect,
+        required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'group_id'
+        ]
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get("first_name", None)
+        if not first_name:
+            raise ValidationError("- введите имя студента")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get("last_name", None)
+        if not last_name:
+            raise ValidationError("- введите фамилию студента")
+        return last_name
+
+    def clean_group_id(self):
+        group_id = self.cleaned_data.get("group_id", None)
+        if not group_id:
+            raise ValidationError("- выберите учебную группу пользователя")
+        return group_id
+
+
+class StudentForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=150, required=False)
+    last_name = forms.CharField(max_length=150, required=False)
+    username = forms.CharField(max_length=150, required=False)
+    password = forms.CharField(
+        max_length=128, required=False, widget=forms.PasswordInput)
+    repeat_password = forms.CharField(
+        max_length=128, required=False, widget=forms.PasswordInput)
+    email = forms.CharField(
+        max_length=254, required=False, widget=forms.EmailInput)
+    group_id = forms.ModelChoiceField(
+        queryset=Group.objects.all().order_by("group_name"),
+        widget=forms.RadioSelect,
+        required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'username',
+            'password',
+            'email',
+            'group_id'
+        ]
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username", None)
+        if username:
+            try:
+                User.objects.get(username=username)
+            except ObjectDoesNotExist:
+                return username
+            else:
+                raise ValidationError(
+                    "- пользователь с таким именем уже существует")
+        else:
+            raise ValidationError("- введите никнейм студента")
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get("first_name", None)
+        if not first_name:
+            raise ValidationError("- введите имя студента")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get("last_name", None)
+        if not last_name:
+            raise ValidationError("- введите фамилию студента")
+        return last_name
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password", None)
+        if not password:
+            raise ValidationError("- введите пароль")
+        return password
+
+    def clean_group_id(self):
+        group_id = self.cleaned_data.get("group_id", None)
+        if not group_id:
+            raise ValidationError("- выберите учебную группу пользователя")
+        return group_id
+
+    def clean(self):
+        repeat_password = self.cleaned_data.get("repeat_password", None)
+        password = self.cleaned_data.get("password", None)
+        if repeat_password != password:
+            raise ValidationError("- пароли не совпадают")
+        return self.cleaned_data
+
+
+class CreateGroupForm(forms.Form):
+    group_name = forms.CharField(max_length=8, required=False)
+    student_for_group = forms.ModelMultipleChoiceField(
+        queryset=User.objects.exclude(
+            group_id__isnull=False).exclude(is_staff=True),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    def clean_group_name(self):
+        group_name = self.cleaned_data.get("group_name", None)
+        if group_name:
+            try:
+                Group.objects.get(group_name=group_name)
+            except ObjectDoesNotExist:
+                return group_name
+            else:
+                raise ValidationError("- такая группа уже существует")
+        else:
+            raise ValidationError("- введите название группы")
 
 
 class PollForm(forms.ModelForm):
@@ -47,14 +219,14 @@ class PollForm(forms.ModelForm):
         poll_name = self.cleaned_data.get('poll_name', None)
         if poll_name:
             return poll_name
-        else:  
+        else:
             raise ValidationError("- введите название теста")
 
     def clean_author_name(self):
         author_name = self.cleaned_data.get('author_name', None)
         if author_name:
             return author_name
-        else:  
+        else:
             raise ValidationError("- введите имя автора")
 
     def clean_active_from(self):
@@ -86,13 +258,13 @@ class PollForm(forms.ModelForm):
                 "- количество попыток должно быть больше нуля")
         return max_attemps
 
-
     def clean_time_to_complete(self):
         time_to_complete = self.cleaned_data.get('time_to_complete', None)
         if not time_to_complete:
             raise ValidationError("- введите время на выполнение теста")
         if time_to_complete <= 0:
-            raise ValidationError("- время на выполнение теста должно быть больше нуля")
+            raise ValidationError(
+                "- время на выполнение теста должно быть больше нуля")
         return time_to_complete
 
     def clean_assess_2(self):
@@ -100,7 +272,8 @@ class PollForm(forms.ModelForm):
         if not assess_2:
             raise ValidationError("- введите количество баллов для оценки '2'")
         if assess_2 < 0:
-            raise ValidationError("- баллы для оценки '2' должны быть положительные")
+            raise ValidationError(
+                "- баллы для оценки '2' должны быть положительные")
         return assess_2
 
     def clean_assess_3(self):
@@ -108,7 +281,8 @@ class PollForm(forms.ModelForm):
         if not assess_3:
             raise ValidationError("- введите количество баллов для оценки '3'")
         if assess_3 <= 0:
-            raise ValidationError("- баллы для оценки '3' должны быть больше нуля")
+            raise ValidationError(
+                "- баллы для оценки '3' должны быть больше нуля")
         return assess_3
 
     def clean_assess_4(self):
@@ -116,7 +290,8 @@ class PollForm(forms.ModelForm):
         if not assess_4:
             raise ValidationError("- введите количество баллов для оценки '4'")
         if assess_4 <= 0:
-            raise ValidationError("- баллы для оценки '4' должны быть больше нуля")
+            raise ValidationError(
+                "- баллы для оценки '4' должны быть больше нуля")
         return assess_4
 
     def clean_assess_5(self):
@@ -124,15 +299,17 @@ class PollForm(forms.ModelForm):
         if not assess_5:
             raise ValidationError("- введите количество баллов для оценки '5'")
         if assess_5 <= 0:
-            raise ValidationError("- баллы для оценки '5' должны быть больше нуля")
+            raise ValidationError(
+                "- баллы для оценки '5' должны быть больше нуля")
         return assess_5
 
     def clean_poll_for_group(self):
         poll_for_group = self.cleaned_data.get('poll_for_group', None)
         if not poll_for_group:
-            raise ValidationError("- выберите группы, для которых доступен тест")
+            raise ValidationError(
+                "- выберите группы, для которых доступен тест")
         return poll_for_group
-    
+
     def clean(self):
         assess_2 = self.cleaned_data.get('assess_2', None)
         assess_3 = self.cleaned_data.get('assess_3', None)
@@ -142,5 +319,6 @@ class PollForm(forms.ModelForm):
             if assess_2 <= assess_3 < assess_4 < assess_5:
                 return self.cleaned_data
             else:
-                raise ValidationError("- оценка выше должна иметь больше баллов, чем нижестоящая")
+                raise ValidationError(
+                    "- оценка выше должна иметь больше баллов, чем нижестоящая")
         return self.cleaned_data

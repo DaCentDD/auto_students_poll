@@ -1,0 +1,92 @@
+header {
+    height: 10%;
+    background-color: white;
+    font-size: 36pt;
+}
+
+.home-button {
+    width: 8%;
+    height: 80%;
+    float: left;
+    margin-left: 4%;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+.plus-button {
+    width: 8%;
+    height: 80%;
+    float: right;
+    margin-right: 0%;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+
+.home-button:hover {
+    font-size: 40pt;
+}
+
+.plus-button:hover {
+    font-size: 40pt;
+}
+
+
+
+.header-title {
+    font-family: 'Open Sans', sans-serif;
+    float: left;
+    font-size: 24pt;
+    margin-left: 23%;
+    margin-top: 1%;
+    font-weight: 1000;
+}
+
+
+.group_button {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 1000;
+    font-size: 50pt;
+    background: none;
+    border: 4px solid white;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    width: 7em;
+    height: 3em;
+    padding: 0.7em;
+    margin-bottom: 2%;
+    font-size: 2em;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px black;
+}
+
+.group_button:hover {
+    width: 8em;
+    height: 4em;
+    background-color: white;
+    color: black;
+    text-shadow: none;
+}
+
+.group-list {
+    margin-top: 1%;
+}
+
+.group-list form {
+    display: inline-block;
+    margin: 3%;
+    text-align: center;
+}
+

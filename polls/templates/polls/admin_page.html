@@ -1,20 +1,19 @@
 {% extends "polls/base.html" %}
 {% load static %}
-{% block title %}Admin{% endblock %}
-{% block style %} 
-<link rel="stylesheet" type="text/css" href="{% static 'polls/css/admin.css' %}">
+{% block title %}Администратор{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/admin_page.css' %}">
 {% endblock %}
 {% block content %}
 
 <body>
-    <div class='split-pane col-xs-12 col-sm-6 uiux-side' style="background-image: url('{% static 'polls/images/website-post-its.png' %}');">
+    <div class='split-pane col-xs-12 col-sm-6 uiux-side'
+        style="background-image: url('{% static 'polls/images/website-post-its.png' %}');">
         <div>
             <div class='text-content'>
                 <div class="bold">Управление</div>
                 <div class='big'>ТЕСТАМИ</div>
             </div>
-            <br>
-            <br>
             <ul>
                 <li>
                     <form action="/poll/create/">
@@ -30,24 +29,24 @@
 
         </div>
     </div>
-    <div class='split-pane col-xs-12 col-sm-6 frontend-side' style="background-image: url('{% static 'polls/images/website-students.png' %}');">
+    <div class='split-pane col-xs-12 col-sm-6 frontend-side'
+        style="background-image: url('{% static 'polls/images/website-students.png' %}');">
         <div>
             <div class='text-content'>
                 <div class="bold">Управление</div>
                 <div class='big'>ПОЛЬЗОВАТЕЛЯМИ</div>
             </div>
-            <br>
-            <br>
             <ul>
-                <li><button>
-                        ДОБАВИТЬ СТУДЕНТА
-                    </button></li>
-                <li><button>
-                        ИЗМЕНИТЬ/УДАЛИТЬ СТУДЕНТА
-                    </button></li>
-                <li><button>
-                        УПРАВЛЕНИЕ ГРУППАМИ
-                    </button></li>
+                <li>
+                    <form action="/students/">
+                        <button type="submit">УПРАВЛЕНИЕ СТУДЕНТАМИ</button>
+                    </form>
+                </li>
+                <li>
+                    <form action="/groups/">
+                        <button type="submit">УПРАВЛЕНИЕ ГРУППАМИ</button>
+                    </form>
+                </li>
             </ul>
 
         </div>

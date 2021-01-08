@@ -6,9 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 
 from .forms import LoginForm
+from .models import *
 
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('/')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         user = None

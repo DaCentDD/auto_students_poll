@@ -1,0 +1,58 @@
+{% extends 'polls/base.html' %}
+
+{% load static %}
+
+{% block title %}Добавить группу{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_create.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    {% if form.errors %}
+    <div class='div-errors container'>
+        {% for field, error in form.errors.items %}
+        {{error}}
+        {% endfor%}
+    </div>
+    {% endif%}
+    <div class='container group-form'>
+
+        <div class='quit_btn'>
+            <form action="/groups/">
+                <button type="submit" class='fa fa-home'></button>
+            </form>
+        </div>
+
+        <div>
+            <button type="submit" class='fa fa-save save_btn'
+                onclick="return confirm('Хотите добавить новую группу?');" form="group_form"></button></div>
+
+        <div class='div-form'>
+            <form id='group_form' action="." method="POST" class='test_form'>
+                <div class="group ">
+                    {{form.group_name}}
+                    <span class="bar"></span>
+                    <label>Название группы</label>
+                </div>
+                <div class="students-check">
+                    <span style="margin-left:20%; font-weight: 1000;">Студенты в этой группе:</span>
+                    {{form.student_for_group}}
+                </div>
+                <br>
+                <br>
+                {% csrf_token %}
+                <input id='save_hide' type="submit" value='SaveHidden' style='display: none'>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+{% endblock %}
