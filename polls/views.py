@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils.functional import partition
+from django.forms import formset_factory
 
 from .forms import *
 from .models import *
@@ -309,8 +310,11 @@ def poll_enter(request, pk, id):
         return redirect(f"/student_page/{request.user.id}")
     current_poll = Poll.objects.get(id=id)
     questions = []
+    if request.method == 'POST':
+        print(request.POST)
     for question in current_poll.poll_question.all():
         form = PassQuestionForm(instance=question)
-        form.fields["question_answer"].queryset = question.question_answer.all()
+        form.fields['question_answer'].queryset = question.question_answer.all()
         questions.append(form)
+    
     return render(request, 'polls/poll_pass.html', {'questions': questions, 'poll': current_poll})

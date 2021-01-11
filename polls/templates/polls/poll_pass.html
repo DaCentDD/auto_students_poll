@@ -28,22 +28,23 @@
 
         <div>
             <button type="submit" class='fa fa-save save_btn' onclick="return confirm('Добавить нового студента?');"
-                form="group_form"></button></div>
+                form="group_form"></button>
+        </div>
 
         <div class='div-form'>
-            <form id='group_form' action="." method="POST">
+            <form id='group_form' action="/student_page/{{request.user.id}}/poll/{{poll.id}}" method="POST">
+                <br>
                 {% for question in questions %}
-                <div class="group">
-                    {{question.question_text}}
-                </div>
-                <div style="text-align:left; margin-left: 25%">
-                    <br>
-                    {{question.question_answer}} 
-                </div>
-                          
-                {% endfor %}
+                <hr>
+                <span style="float: left; margin-left: 25%; background-color: white;">{{question.question_text}}</span>
 
-                
+                <div style="text-align:left; margin-left: 25%; width: 50%; height: 150%;" class="form-group">
+                    <br>
+                    {{question.question_answer}}
+                </div>
+                <hr>
+                <br>
+                {% endfor %}
                 <br>
                 <br>
                 {% csrf_token %}
@@ -52,7 +53,13 @@
         </div>
 
     </div>
-
+    <script src="{% static 'polls/js/jquery.js' %}"></script>
+    <script src="{% static 'polls/js/awselect.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('select').awselect()
+        });
+    </script>
 </body>
 
 {% endblock %}

@@ -3,14 +3,14 @@ body {
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 20px;
     color: black;
-    background-color: gray;
+    background-color: white;
     
 }
 
 
 .question_div {
     border-radius: 0px;
-    background-color:#373737;
+    background-color:white;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -324,7 +324,7 @@ body {
     display: block;
     width: 80%;
     border: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid white;
 }
 
 .group input:focus {
@@ -439,7 +439,7 @@ body {
 }
 
 .group-form {
-    width: 57%;
+    width: 70%;
     
 }
 
@@ -474,4 +474,21 @@ body {
     color: white;
 }
 
+select {
+    width: 20%;
+    margin-bottom: 3%;
+}
 
+option {
+    height: 150%;
+}
+
+select input{
+    background-color: white;
+    width: 100%;
+    margin-bottom: 2%;
+}
+
+input {
+    background-color: white;
+}

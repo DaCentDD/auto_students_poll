@@ -21,6 +21,7 @@ class AnswersForm(forms.ModelForm):
 
 class QuestionForm(forms.ModelForm):
     many_correct = forms.BooleanField(required=False)
+
     class Meta:
         model = Question
         fields = [
@@ -32,24 +33,27 @@ class QuestionForm(forms.ModelForm):
 
 
 class PassQuestionForm(forms.ModelForm):
-    question_text = forms.CharField(disabled=True)
+    question_text = forms.CharField(disabled=True, widget=forms.TextInput)
     points_for_question = forms.IntegerField(disabled=True)
-    question_answer = forms.ModelChoiceField(
-                queryset=Answer.objects.all(),
-                widget=forms.RadioSelect,
-                required=False,
-                )
-
+    question_answer = forms.ModelChoiceField(queryset=Answer.objects.all(), widget=forms.Select(attrs={"class":"form-control", "size":"1"}))
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        instance = kwargs.get("instance")
-        print(instance.many_correct)
+        instance = kwargs.get("instance")  
         if instance.many_correct is True:
             self.fields['question_answer'] = forms.ModelMultipleChoiceField(
-                queryset=Answer.objects.all(),
+                queryset=instance.question_answer.all(),
                 widget=forms.CheckboxSelectMultiple,
                 required=False,
-                )
+            )
+
+        # else:
+        #     self.fields['question_answer'] = forms.ModelChoiceField(
+        #         queryset=instance.question_answer.all(),
+        #         widget=forms.RadioSelect(attrs={'name':"check"}),
+        #         required=False,
+        #     )
+
 
     class Meta:
         model = Question
@@ -374,6 +378,3 @@ class PollForm(forms.ModelForm):
                 raise ValidationError(
                     "- оценка выше должна иметь больше баллов, чем нижестоящая")
         return self.cleaned_data
-
-
-
