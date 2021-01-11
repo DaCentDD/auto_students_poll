@@ -1,7 +1,42 @@
-{% extends "polls/base.html" %}
-{% block title %}Student{% endblock %}
+{% extends 'polls/base.html' %}
+{% load static %}
+
+{% block title %}
+{{request.user.get_full_name}}
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/student_page.css' %}">
+{% endblock style %}
+
 {% block content %}
-<h1>Ура</h1>
-<p>Получилось зайти в студентку!</p>
-<a href={% url 'accounts:logout' %}>Выйти</a>
-{% endblock %}
+<header>
+    <form action={% url 'accounts:logout' %} class="home-button">
+        <button type="submit" class='fa fa-sign-out' style="transform: rotate(180deg)"></button>
+    </form>
+    <form action="/student_page/{{request.user.id}}/info" class="plus-button">
+        <button type="submit" class='fa fa-info-circle'></button>
+    </form>
+    <div class="header-title">{{request.user.get_full_name}}</div>
+</header>
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div class="container">
+        <div class="group-list">
+            {% for poll in polls  %}
+            <form action="/student_page/{{request.user.id}}/poll/{{poll.id}}">
+                <button type="submit" class="group_button" style="width:100%;">
+                Тест: {{poll.poll_name}} <br> 
+                Автор: {{poll.author_name}} <br> 
+                Активен с {{poll.active_from}} <br> 
+                Активен до {{poll.active_to}} <br> 
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+        
+    </div>
+</body>
+
+
+
+{% endblock content %}

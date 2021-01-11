@@ -8,8 +8,8 @@ app_name = 'polls'
 
 urlpatterns = [
     path('', views.main, name='main'),
+    path('student_page/', views.main, name='student_page'),
     path('student_page/<pk>', views.student_page, name='student_page'),
-
     path('admin_page/', views.admin_page, name='admin_page'),
     path('groups/', views.groups_menu, name='group_menu'),
     path('groups/create/', views.group_create, name='group_create'),

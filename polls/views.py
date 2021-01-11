@@ -19,9 +19,12 @@ def main(request):
 
 @login_required(login_url='/login')
 def student_page(request, pk):
-    if pk != request.user.id:
+    print(type(pk))
+    if int(pk) != request.user.id:
         return redirect(f"/student_page/{request.user.id}")
-    return render(request, 'polls/student_page.html')
+    polls = Poll.objects.filter(poll_for_group__id = request.user.group_id.id)
+    print(polls)
+    return render(request, 'polls/student_page.html', {"polls": polls})
 
 
 @login_required(login_url='/login')
