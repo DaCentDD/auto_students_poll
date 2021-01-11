@@ -10,6 +10,7 @@ urlpatterns = [
     path('', views.main, name='main'),
     path('student_page/', views.main, name='student_page'),
     path('student_page/<pk>', views.student_page, name='student_page'),
+    path('student_page/<pk>/poll/<id>', views.poll_enter, name='poll_enter'),
     path('admin_page/', views.admin_page, name='admin_page'),
     path('groups/', views.groups_menu, name='group_menu'),
     path('groups/create/', views.group_create, name='group_create'),
@@ -22,6 +23,7 @@ urlpatterns = [
     path('students/student/<pk>/password', views.student_password, name='students_password'),
     path('polls/', views.polls_menu, name='polls_menu'),
     path('polls/create/', views.poll_create, name='poll_create'),
-    path('polls/poll/<pk>', views.poll, name='student'),
+    path('polls/poll/<pk>', views.poll, name='poll'),
+    path('polls/poll/<pk>/delete', views.poll_delete, name='poll_delete'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -62,3 +62,6 @@ class Answer(models.Model):
     )
     answer_text = models.CharField(max_length=50)
     is_right = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.answer_text

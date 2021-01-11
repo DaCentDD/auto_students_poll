@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.utils.functional import partition
 
 from .forms import *
 from .models import *
@@ -19,11 +20,9 @@ def main(request):
 
 @login_required(login_url='/login')
 def student_page(request, pk):
-    print(type(pk))
     if int(pk) != request.user.id:
         return redirect(f"/student_page/{request.user.id}")
-    polls = Poll.objects.filter(poll_for_group__id = request.user.group_id.id)
-    print(polls)
+    polls = Poll.objects.filter(poll_for_group__id=request.user.group_id.id)
     return render(request, 'polls/student_page.html', {"polls": polls})
 
 
@@ -70,7 +69,6 @@ def group_create(request):
         if form.is_valid():
             cd = form.cleaned_data
             group_obj = Group.objects.create(group_name=cd["group_name"])
-            print(cd)
             for student in cd["student_for_group"]:
                 student_obj = User.objects.get(username=student)
                 student_obj.group_id = group_obj
@@ -97,7 +95,11 @@ def student_create(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
         if form.is_valid():
+            password = form.cleaned_data["password"]
             form.save()
+            user = User.objects.get(username=form.cleaned_data['username'])
+            user.set_password(password)
+            user.save()
             return redirect("/students/")
         else:
             return render(request, 'polls/student_create.html', {'form': form})
@@ -196,30 +198,40 @@ def question_validation(all_poll_details: dict):
                     form.answer_text = element_details[detail]
                 if detail == 1:  # И указываем правильный  ли ответ
                     form.is_right = True if element_details[detail] == 'true' else False
-                    if form.is_right is True:
-                        right_answer_count += 1
+                    if form.is_right:
+                        right_answer_count += 1              
             # Добавляем временное значение id вопроса в форму ответа
             form.question_id = question_id
 
     for element in question_answer_list:
-        if element.startswith('question'):
+        if element.startswith('question'): # Если вопрос
+            print(right_answer_count)
             if right_answer_count < 1 and question_id > 0:  # Если нет хотя бы одного правильного ответа у вопроса
                 error_list.append(
                     f"- {question_id} вопрос не содержит правильных ответов")
             elif right_answer_count > 1:  # Если правильных ответов больше одного
-                questions_and_answers["questions"][question_id -
-                                                   1].many_correct = True
+                questions_and_answers["questions"][question_id - 1].many_correct = True
+            elif right_answer_count == 1:
+                questions_and_answers["questions"][question_id - 1].many_correct = False
             question_id += 1
             right_answer_count = 0
             element_details = all_poll_details[element].split(',')
             form = QuestionForm()
             check('question')
             questions_and_answers['questions'].append(form)
-        else:
+        else:  # Если ответ
             element_details = all_poll_details[element].split(',')
             form = AnswersForm()
             check('answer')
             questions_and_answers['answers'].append(form)
+            if element == question_answer_list[-1]: # Если последний элемент
+                if right_answer_count < 1 and question_id > 0:  # Если нет хотя бы одного правильного ответа у вопроса
+                    error_list.append(
+                        f"- {question_id} вопрос не содержит правильных ответов")
+                elif right_answer_count > 1:  # Если правильных ответов больше одного
+                    questions_and_answers["questions"][question_id - 1].many_correct = True
+                elif right_answer_count == 1:
+                    questions_and_answers["questions"][question_id - 1].many_correct = False
     if len(error_list) > 0:
         return error_list
     else:
@@ -242,11 +254,15 @@ def poll_create(request):
                 new_question = qst_form.save(commit=False)
                 new_question.poll_id = new_test
                 new_question.points_for_question = qst_form.points_for_question
+                new_question.question_text = qst_form.question_text
+                new_question.many_correct = qst_form.many_correct
                 new_question.save()
                 for ans_form in questions_and_answers["answers"]:
                     if ans_form.question_id == qst_id:
                         new_answer = ans_form.save(commit=False)
                         new_answer.question_id = new_question
+                        new_answer.answer_text = ans_form.answer_text
+                        new_answer.is_right = ans_form.is_right
                         new_answer.save()
                 qst_id += 1
         else:
@@ -277,3 +293,24 @@ def poll(request, pk):
             return render(request, 'polls/poll.html', {'form': form, 'poll': poll_obj})
     form = PollForm(instance=poll_obj)
     return render(request, 'polls/poll.html', {'form': form, 'poll': poll_obj})
+
+
+@login_required(login_url='/login')
+def poll_delete(request, pk):
+    if request.user.is_staff is False:
+        return redirect("/student_page/")
+    Poll.objects.get(id=pk).delete()
+    return redirect("/polls/")
+
+
+@login_required(login_url='/login')
+def poll_enter(request, pk, id):
+    if int(pk) != request.user.id:
+        return redirect(f"/student_page/{request.user.id}")
+    current_poll = Poll.objects.get(id=id)
+    questions = []
+    for question in current_poll.poll_question.all():
+        form = PassQuestionForm(instance=question)
+        form.fields["question_answer"].queryset = question.question_answer.all()
+        questions.append(form)
+    return render(request, 'polls/poll_pass.html', {'questions': questions, 'poll': current_poll})

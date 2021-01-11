@@ -18,7 +18,38 @@ class AnswersForm(forms.ModelForm):
             'is_right',
         ]
 
+
 class QuestionForm(forms.ModelForm):
+    many_correct = forms.BooleanField(required=False)
+    class Meta:
+        model = Question
+        fields = [
+            'question_text',
+            'points_for_question',
+            'many_correct',
+            'poll_id',
+        ]
+
+
+class PassQuestionForm(forms.ModelForm):
+    question_text = forms.CharField(disabled=True)
+    points_for_question = forms.IntegerField(disabled=True)
+    question_answer = forms.ModelChoiceField(
+                queryset=Answer.objects.all(),
+                widget=forms.RadioSelect,
+                required=False,
+                )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get("instance")
+        print(instance.many_correct)
+        if instance.many_correct is True:
+            self.fields['question_answer'] = forms.ModelMultipleChoiceField(
+                queryset=Answer.objects.all(),
+                widget=forms.CheckboxSelectMultiple,
+                required=False,
+                )
 
     class Meta:
         model = Question
@@ -26,25 +57,25 @@ class QuestionForm(forms.ModelForm):
             'question_text',
             'points_for_question',
             'many_correct',
-            'poll_id'
+            'poll_id',
         ]
 
 
-class ChangeGroupForm(forms.ModelForm):   
+class ChangeGroupForm(forms.ModelForm):
     group_name = forms.CharField(max_length=8, required=False)
     group_student = forms.ModelMultipleChoiceField(
         queryset=User.objects.exclude(is_staff=True),
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    
+
     class Meta:
         model = Group
         fields = [
             'group_name',
             'group_student',
         ]
-    
+
 
 class PasswordStudentForm(forms.ModelForm):
     password = forms.CharField(
@@ -70,7 +101,7 @@ class PasswordStudentForm(forms.ModelForm):
         if repeat_password != password:
             raise ValidationError("- пароли не совпадают")
         return self.cleaned_data
-        
+
 
 class ChangeStudentForm(forms.ModelForm):
     first_name = forms.CharField(max_length=150, required=False)
@@ -290,7 +321,7 @@ class PollForm(forms.ModelForm):
 
     def clean_assess_2(self):
         assess_2 = self.cleaned_data.get('assess_2', None)
-        if not assess_2:
+        if not assess_2 and (assess_2 != 0):
             raise ValidationError("- введите количество баллов для оценки '2'")
         if assess_2 < 0:
             raise ValidationError(
@@ -299,7 +330,7 @@ class PollForm(forms.ModelForm):
 
     def clean_assess_3(self):
         assess_3 = self.cleaned_data.get('assess_3', None)
-        if not assess_3:
+        if not assess_3 and (assess_3 != 0):
             raise ValidationError("- введите количество баллов для оценки '3'")
         if assess_3 <= 0:
             raise ValidationError(
@@ -308,7 +339,7 @@ class PollForm(forms.ModelForm):
 
     def clean_assess_4(self):
         assess_4 = self.cleaned_data.get('assess_4', None)
-        if not assess_4:
+        if not assess_4 and (assess_4 != 0):
             raise ValidationError("- введите количество баллов для оценки '4'")
         if assess_4 <= 0:
             raise ValidationError(
@@ -317,7 +348,7 @@ class PollForm(forms.ModelForm):
 
     def clean_assess_5(self):
         assess_5 = self.cleaned_data.get('assess_5', None)
-        if not assess_5:
+        if not assess_5 and (assess_5 != 0):
             raise ValidationError("- введите количество баллов для оценки '5'")
         if assess_5 <= 0:
             raise ValidationError(
@@ -343,3 +374,6 @@ class PollForm(forms.ModelForm):
                 raise ValidationError(
                     "- оценка выше должна иметь больше баллов, чем нижестоящая")
         return self.cleaned_data
+
+
+
