@@ -1,3 +1,5 @@
+from collections import defaultdict
+from typing import Protocol
 from django.http.response import Http404
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
@@ -6,6 +8,8 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils.functional import partition
 from django.forms import formset_factory
+
+from collections import defaultdict
 
 from .forms import *
 from .models import *
@@ -311,7 +315,23 @@ def poll_enter(request, pk, id):
     current_poll = Poll.objects.get(id=id)
     questions = []
     if request.method == 'POST':
-        print(request.POST)
+        new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)), points=0)
+        answers = request.POST.getlist('question_answer')
+        if_question_correct = defaultdict(bool)
+        for answer in answers:       
+            answer_obj = Answer.objects.get(id=int(answer))
+            if not if_question_correct.get(answer_obj.question_id.id, True):
+                continue
+            if answer_obj.question_id.many_correct is True:
+                if answer_obj.is_right:
+                    if_question_correct[answer_obj.question_id.id] = True
+                else:
+                    if_question_correct[answer_obj.question_id.id] = False        
+            else:
+                if answer_obj.is_right:
+                    new_result.points += answer_obj.question_id.points_for_question
+        print(if_question_correct)
+        
     for question in current_poll.poll_question.all():
         form = PassQuestionForm(instance=question)
         form.fields['question_answer'].queryset = question.question_answer.all()

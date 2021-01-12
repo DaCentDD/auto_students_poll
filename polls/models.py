@@ -20,6 +20,7 @@ class Poll(models.Model):
     assess_3 = models.PositiveIntegerField()
     assess_4 = models.PositiveIntegerField()
     assess_5 = models.PositiveIntegerField()
+    is_started = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('active_to',)
@@ -38,7 +39,6 @@ class PollResult(models.Model):
     )
     current_attemps = models.IntegerField(blank=True, null=True)
     points = models.IntegerField()
-    time_spent = models.TimeField()
     assess = models.CharField(max_length=20)
 
 

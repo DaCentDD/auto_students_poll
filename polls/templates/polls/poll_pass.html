@@ -11,13 +11,6 @@
 {% block content %}
 
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
-    {% if form.errors %}
-    <div class='div-errors container'>
-        {% for field, error in form.errors.items %}
-        {{error}}
-        {% endfor%}
-    </div>
-    {% endif%}
     <div class='container group-form'>
 
         <div class='quit_btn'>
@@ -25,9 +18,10 @@
                 <button type="submit" class='fa fa-home'></button>
             </form>
         </div>
-
+        <span style="float:left; margin-left: 35%;">{{poll.poll_name}}</span>
+        
         <div>
-            <button type="submit" class='fa fa-save save_btn' onclick="return confirm('Добавить нового студента?');"
+            <button type="submit" class='fa fa-save save_btn' onclick="return confirm('Вы уверены, что хотите закончить тест?');"
                 form="group_form"></button>
         </div>
 
