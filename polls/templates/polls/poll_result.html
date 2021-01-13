@@ -1,0 +1,67 @@
+{% extends 'polls/base.html' %}
+
+{% load static %}
+
+{% block title %}{{poll.poll_name}}{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_pass.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div class='container group-form'>
+
+        <div class='quit_btn'>
+            <form action="/students/">
+                <button type="submit" class='fa fa-home'></button>
+            </form>
+        </div>
+
+        <div class='div-form'>
+            <form id='group_form' action="/student_page/{{request.user.id}}/poll/{{poll.id}}" method="POST">
+                <span style="margin-top:2%; margin-left: 0%; font-weight: 1000; font-size: 26pt">Тест {{poll.poll_name}}
+                    завершен</span>
+                <br>
+                <hr>
+                <br>
+                <br>
+                <div style="text-align: left; margin-left: 25%;">
+                    <span style="font-weight: 1000;">Израсходовано попыток: {{result.current_attemps}}</span>
+                    <br>
+                    <span style="font-weight: 1000;">Набрано баллов: {{result.points}}</span>
+                    <br>
+                    {% if result.current_attemps > 0 %}
+                    <span style="font-weight: 1000;">Итоговая оценка: {{result.assess}}</span>
+                    {% endif %}
+                    <br>
+                    <br>
+                </div>
+                <br>
+                {% for question in questions %}
+                {% with answers=question.question_answer.all %}          
+                <hr>
+                <span style="float: left; margin-left: 25%; background-color: white">{{question.question_text}}</span>
+                <br>
+                <div style="text-align:left; margin-left: 25%; width: 50%; height: 150%;" class="form-group">
+                    <br>
+                    {% for answer in answers %}
+                        {% if answer.is_right %}
+                        <span style="color:green;">{{answer}}</span> <br>                
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <hr>
+                <br>
+                {% endwith %}
+                {% endfor %}
+                {% csrf_token %}
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+{% endblock %}

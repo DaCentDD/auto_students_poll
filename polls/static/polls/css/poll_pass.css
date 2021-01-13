@@ -464,6 +464,50 @@ body {
     border-radius: 0px 0px 10px 00px;
 }
 
+.start_btn {
+    float: right;
+    margin-right: 1%;
+    font-size: 14pt;
+    font-weight: 1000;
+    padding: 1%;
+    border: 2px solid black;
+    margin-top: 0.5%;
+    border-radius: 10px;
+    width: 15%;
+    height: 15%;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.start_btn:hover {
+    width: 16%;
+    font-size: 16pt;
+}
+
+.finish_btn {
+    float: right;
+    margin-right: 1%;
+    font-size: 14pt;
+    font-weight: 1000;
+    padding: 1%;
+    border: 2px solid black;
+    margin-top: 0.5%;
+    border-radius: 10px;
+    width: 23%;
+    height: 15%;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+    margin-top: 2%;
+}
+
+.finish_btn:hover {
+    width: 24%;
+    height: 16%;
+    font-size: 16pt;
+}
+
 .password_btn:hover {
     background-color: black;
     color: white;

@@ -19,21 +19,24 @@
     </form>
     <div class="header-title">{{request.user.get_full_name}}</div>
 </header>
+
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
     <div class="container">
         <div class="group-list">
             {% for poll in polls  %}
+
             <form action="/student_page/{{request.user.id}}/poll/{{poll.id}}">
                 <button type="submit" class="group_button" style="width:100%;">
-                Тест: {{poll.poll_name}} <br> 
-                Автор: {{poll.author_name}} <br> 
-                Активен с {{poll.active_from}} <br> 
-                Активен до {{poll.active_to}} <br> 
+                    Тест: {{poll.poll_name}} <br>
+                    Автор: {{poll.author_name}} <br>
+                    Активен с {{poll.active_from}} <br>
+                    Активен до {{poll.active_to}} <br>
                 </button>
             </form>
+
             {% endfor %}
         </div>
-        
+
     </div>
 </body>
 

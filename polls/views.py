@@ -205,20 +205,22 @@ def question_validation(all_poll_details: dict):
                 if detail == 1:  # И указываем правильный  ли ответ
                     form.is_right = True if element_details[detail] == 'true' else False
                     if form.is_right:
-                        right_answer_count += 1              
+                        right_answer_count += 1
             # Добавляем временное значение id вопроса в форму ответа
             form.question_id = question_id
 
     for element in question_answer_list:
-        if element.startswith('question'): # Если вопрос
+        if element.startswith('question'):  # Если вопрос
             print(right_answer_count)
             if right_answer_count < 1 and question_id > 0:  # Если нет хотя бы одного правильного ответа у вопроса
                 error_list.append(
                     f"- {question_id} вопрос не содержит правильных ответов")
             elif right_answer_count > 1:  # Если правильных ответов больше одного
-                questions_and_answers["questions"][question_id - 1].many_correct = True
+                questions_and_answers["questions"][question_id -
+                                                   1].many_correct = True
             elif right_answer_count == 1:
-                questions_and_answers["questions"][question_id - 1].many_correct = False
+                questions_and_answers["questions"][question_id -
+                                                   1].many_correct = False
             question_id += 1
             right_answer_count = 0
             element_details = all_poll_details[element].split(',')
@@ -230,14 +232,16 @@ def question_validation(all_poll_details: dict):
             form = AnswersForm()
             check('answer')
             questions_and_answers['answers'].append(form)
-            if element == question_answer_list[-1]: # Если последний элемент
+            if element == question_answer_list[-1]:  # Если последний элемент
                 if right_answer_count < 1 and question_id > 0:  # Если нет хотя бы одного правильного ответа у вопроса
                     error_list.append(
                         f"- {question_id} вопрос не содержит правильных ответов")
                 elif right_answer_count > 1:  # Если правильных ответов больше одного
-                    questions_and_answers["questions"][question_id - 1].many_correct = True
+                    questions_and_answers["questions"][question_id -
+                                                       1].many_correct = True
                 elif right_answer_count == 1:
-                    questions_and_answers["questions"][question_id - 1].many_correct = False
+                    questions_and_answers["questions"][question_id -
+                                                       1].many_correct = False
     if len(error_list) > 0:
         return error_list
     else:
@@ -317,42 +321,58 @@ def poll_enter(request, pk, id):
     questions = []
     if request.method == 'POST':
         try:
+            new_result = PollResult.objects.get(username_id=User.objects.get(
+                id=int(pk)), poll_id=Poll.objects.get(id=int(id)))
+        except ObjectDoesNotExist:
+            new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(
+                id=int(id)), points=0, current_attemps=0)  # Создаем новый результат
+        if new_result.is_started is False: # Если тест не начат - начать
+            new_result.is_started = True
+            new_result.save()
+            return redirect(f"/student_page/{pk}/poll/{id}")  # Обновление страницы      
+        new_result.check_result(request.POST)     
+        new_result.get_asses()
+        new_result.is_started = False
+        new_result.save()
+        return redirect(f"/student_page/{pk}/poll/{id}")
+
+    if request.method == 'GET':
+        try:
             new_result = PollResult.objects.get(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)))
         except ObjectDoesNotExist:
-            new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)), points=0, current_attemps=0)  # Создаем новый результат
-        answers = request.POST.getlist('question_answer')
-        if_question_correct, question_right_answers = defaultdict(bool), defaultdict(list)
-        for answer in answers:   
-            if not answer: 
-                continue    
-            answer_obj = Answer.objects.get(id=int(answer)) 
-            if not if_question_correct.get(answer_obj.question_id.id, True): # Если для вопроса уже установлен флаг "неверно"
-                continue
-            if answer_obj.question_id.many_correct is True: # Если вопрос с множеством правильных ответов
-                if not answer_obj.question_id.id in question_right_answers.keys(): # Если вопрос ещё не обрабатывался
-                    question_right_answers[answer_obj.question_id.id] = \
-                        [right_answer for right_answer in answer_obj.question_id.question_answer.all() if right_answer.is_right==True]  # Содаем список с правильными ответами 
-                if answer_obj.is_right:  # Если текущий ответ правильный
-                    if_question_correct[answer_obj.question_id.id] = True  # Устанавливаем для вопроса флаг верно  
-                    question_right_answers[answer_obj.question_id.id].remove(answer_obj) # Удаляем ответ из списка правильных вопросов
-                else:
-                    if_question_correct[answer_obj.question_id.id] = False  # Если ответ неправильный, то весь вопрос считается не отвеченным
-            else: # Если правильный ответ один, то добавляем баллов за вопрос
-                if answer_obj.is_right:
-                    new_result.points += answer_obj.question_id.points_for_question
-        for question_id, is_right in if_question_correct.items(): # Проверяем результаты обработки вопросов с несколькими праввильными ответами
-            if question_id in question_right_answers.keys(): # Проверяем на то, все ли правильные вопросы были выбраны
-                if len(question_right_answers[question_id]) > 0: # Если какой-то правильный ответ не выбран, то баллов не даем
-                    continue
-            if is_right: # Иначе добавляем баллов
-                new_result.points += Question.objects.get(id=question_id).points_for_question
-        new_result.current_attemps += 1
-        new_result.get_asses()
+            new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)), points=0, current_attemps=0)  # Создаем новый результат  
+        if new_result.is_finished is True:
+            return render(request, 'polls/poll_result.html', {'poll': current_poll, 'questions': current_poll.poll_question.all(), 'result':new_result})
+        if new_result.is_started is False:
+            return render(request, 'polls/poll_enter.html', {'poll': current_poll, 'result':new_result})
+        elif (new_result.is_started is True) and (new_result.assess == '0'):
+            new_result.is_started = False 
+            new_result.assess = 2
+            new_result.save()
+            return render(request, 'polls/poll_enter.html', {'poll': current_poll, 'result':new_result})
+        for question in current_poll.poll_question.all():
+            form = PassQuestionForm(instance=question)
+            form.fields['question_answer'].queryset = question.question_answer.all()
+            questions.append(form)      
+        new_result.current_attemps += 1    
+        new_result.assess = 0
         new_result.save()
-        
-    for question in current_poll.poll_question.all():
-        form = PassQuestionForm(instance=question)
-        form.fields['question_answer'].queryset = question.question_answer.all()
-        questions.append(form)
+        return render(request, 'polls/poll_pass.html', {'questions': questions, 'poll': current_poll})
+
+
+@login_required(login_url='/login')
+def poll_finish(request, pk, id):
+    if int(pk) != request.user.id:
+        return redirect(f"/student_page/{request.user.id}")
+    if request.method == 'POST':
+        try:
+            new_result = PollResult.objects.get(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)))
+        except ObjectDoesNotExist:
+            new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)), points=0, current_attemps=0)  # Создаем новый результат 
+        new_result.is_finished = True
+        new_result.save()
+        return redirect(f"/student_page/{pk}/poll/{id}")
+    else:
+        return redirect(f"/student_page/{pk}/poll/{id}")
     
-    return render(request, 'polls/poll_pass.html', {'questions': questions, 'poll': current_poll})
+    

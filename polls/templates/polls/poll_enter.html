@@ -1,0 +1,91 @@
+{% extends 'polls/base.html' %}
+
+{% load static %}
+
+{% block title %}{{poll.poll_name}}{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_pass.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div class='container group-form'>
+
+        <div class='quit_btn'>
+            <form action="/students/">
+                <button type="submit" class='fa fa-home'></button>
+            </form>
+        </div>
+
+
+        <div>
+            <button type="submit" class="start_btn" onclick="return confirm('Начать тест?');" form="group_form">Начать
+                тест</button>
+        </div>
+
+        <div class='div-form'>
+            <form id='group_form' action="/student_page/{{request.user.id}}/poll/{{poll.id}}" method="POST">
+                <span
+                    style="margin-top:2%; margin-left: 3%; font-weight: 1000; font-size: 26pt">{{poll.poll_name}}</span>
+                <br>
+                <hr>
+                <br>
+                <br>
+                <div style="text-align: left; margin-left: 15%;">
+                    <span style="font-weight: 1000; background-color: red; border-radius: 10px; padding: 1%;">Обновление страницы или выход из теста приведет к потере
+                        попытки!</span>
+                    <br>
+                    <hr>
+
+                    <span style="font-weight: 1000;">Время на выполнение: {{poll.time_to_complete}} минут</span>
+                    <br>
+                    <hr>
+
+                    <span style="font-weight: 1000;">Количество вопросов: {{poll.poll_question.all|length}}</span>
+                    <br>
+                    <hr>
+
+                    <span style="font-weight: 1000;">Израсходовано попыток: {{result.current_attemps}}</span>
+                    <br>
+                    <hr>
+
+                    <span style="font-weight: 1000;">Всего попыток: {{poll.max_attemps}}</span>
+                    <br>
+                    <hr>
+
+                    <span style="font-weight: 1000;">Активен с {{poll.active_from}}</span>
+                    <br>
+                    <hr>
+
+                    <span style="font-weight: 1000;">Активен до {{poll.active_to}}</span>
+                    <br>
+                    <hr>
+      
+                    {% if result.current_attemps > 0 %}
+                    <span style="font-weight: 1000;">Последняя оценка: {{result.assess}}</span>
+                    {% endif %}
+                    <br>
+                    <hr>
+
+                    <div>
+                        <button type="submit" class="finish_btn" onclick="return confirm('Вы действительно хотите закончить тест?');"
+                            form="finish_form">Закончить тест</button>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                {% csrf_token %}
+            </form>
+            <form action="/student_page/{{request.user.id}}/poll/{{poll.id}}/finish" id='finish_form' method="POST">
+                {% csrf_token %}
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+{% endblock %}

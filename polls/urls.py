@@ -11,6 +11,7 @@ urlpatterns = [
     path('student_page/', views.main, name='student_page'),
     path('student_page/<pk>', views.student_page, name='student_page'),
     path('student_page/<pk>/poll/<id>', views.poll_enter, name='poll_enter'),
+    path('student_page/<pk>/poll/<id>/finish', views.poll_finish, name='poll_finish'),
     path('admin_page/', views.admin_page, name='admin_page'),
     path('groups/', views.groups_menu, name='group_menu'),
     path('groups/create/', views.group_create, name='group_create'),

@@ -4,6 +4,9 @@ from django.conf import settings
 import django.utils.timezone
 
 
+from collections import defaultdict
+
+
 class Poll(models.Model):
     id = models.AutoField(primary_key=True)
     poll_name = models.CharField(max_length=40)
@@ -20,10 +23,9 @@ class Poll(models.Model):
     assess_3 = models.PositiveIntegerField()
     assess_4 = models.PositiveIntegerField()
     assess_5 = models.PositiveIntegerField()
-    is_started = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ('active_to',)
+        ordering = ('-active_from',)
 
 
 class PollResult(models.Model):
@@ -40,6 +42,8 @@ class PollResult(models.Model):
     current_attemps = models.IntegerField(blank=True, null=True)
     points = models.IntegerField()
     assess = models.CharField(max_length=20)
+    is_started = models.BooleanField(default=False)
+    is_finished = models.BooleanField(default=False)
 
     def get_asses(self):
         if self.points <= self.poll_id.assess_2:
@@ -50,6 +54,37 @@ class PollResult(models.Model):
             self.assess = 4
         elif self.points <= self.poll_id.assess_5:
             self.assess = 5
+
+    def check_result(self, data):
+        answers = data.getlist('question_answer')
+        self.points = 0
+        if_question_correct, question_right_answers = defaultdict(bool), defaultdict(list)
+        for answer in answers:   
+            if not answer: 
+                continue    
+            answer_obj = Answer.objects.get(id=int(answer)) 
+            if not if_question_correct.get(answer_obj.question_id.id, True): # Если для вопроса уже установлен флаг "неверно"
+                continue
+            if answer_obj.question_id.many_correct is True: # Если вопрос с множеством правильных ответов
+                if not answer_obj.question_id.id in question_right_answers.keys(): # Если вопрос ещё не обрабатывался
+                    question_right_answers[answer_obj.question_id.id] = \
+                        [right_answer for right_answer in answer_obj.question_id.question_answer.all() if right_answer.is_right==True]  # Содаем список с правильными ответами 
+                if answer_obj.is_right:  # Если текущий ответ правильный
+                    if_question_correct[answer_obj.question_id.id] = True  # Устанавливаем для вопроса флаг верно  
+                    question_right_answers[answer_obj.question_id.id].remove(answer_obj) # Удаляем ответ из списка правильных вопросов
+                else:
+                    if_question_correct[answer_obj.question_id.id] = False  # Если ответ неправильный, то весь вопрос считается не отвеченным
+            else: # Если правильный ответ один, то добавляем баллов за вопрос
+                if answer_obj.is_right:
+                    self.points += answer_obj.question_id.points_for_question
+        
+        for question_id, is_right in if_question_correct.items(): # Проверяем результаты обработки вопросов с несколькими праввильными ответами
+            if question_id in question_right_answers.keys(): # Проверяем на то, все ли правильные вопросы были выбраны
+                if len(question_right_answers[question_id]) > 0: # Если какой-то правильный ответ не выбран, то баллов не даем
+                    continue
+            if is_right: # Иначе добавляем баллов
+                self.points += Question.objects.get(id=question_id).points_for_question
+
 
         
 
