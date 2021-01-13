@@ -64,7 +64,7 @@
                 </div>
                 <div class='delete_btn'>
                     <form action="/students/student/{{student.id}}/delete">
-                        <button type="submit">УДАЛИТЬ СТУДЕНТА</button>
+                        <button type="submit" onclick="return confirm('Удалить студента?');">УДАЛИТЬ СТУДЕНТА</button>
                     </form>
                 </div>
             </div>

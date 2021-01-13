@@ -18,8 +18,7 @@
                 <button type="submit" class='fa fa-home'></button>
             </form>
         </div>
-
-        {% if is_active %}
+        {% if is_active or is_active == None %}
         <div>
             <button type="submit" class="start_btn" onclick="return confirm('Начать тест?');" form="group_form">Начать
                 тест</button>
@@ -39,7 +38,7 @@
                 <br>
                 <br>
                 <div style="text-align: left; margin-left: 15%;">
-                    <span style="font-weight: 1000; background-color: red; border-radius: 10px; padding: 1%;">Обновление страницы или выход из теста приведет к потере
+                    <span style="font-weight: 1000; background-color: #B22222; border-radius: 10px; padding: 1%;">Обновление страницы или выход из теста приведет к потере
                         попытки!</span>
                     <br>
                     <hr>
@@ -77,7 +76,7 @@
                 </table>
                     <br>
                     <hr>
-                    {% if is_active %}
+                    {% if is_active or is_active == None %}
                     <div>
                         <button type="submit" class="finish_btn" onclick="return confirm('Вы действительно хотите закончить тест?');"
                             form="finish_form">Закончить тест</button>

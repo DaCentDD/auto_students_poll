@@ -537,3 +537,15 @@ select input{
 input {
     background-color: white;
 }
+
+#timer {
+    position: fixed;
+    float: right; 
+    margin-right: 7%; 
+    margin-top: 15%;
+    font-size: 32pt;
+    color: white;
+    font-weight: 1000;
+    left: 84%;
+    
+}

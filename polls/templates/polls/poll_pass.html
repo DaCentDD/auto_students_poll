@@ -11,13 +11,13 @@
 {% block content %}
 
 <body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div id="timer"></div>
     <div class='container group-form'>
-
-        <span style="float:left; margin-left: 45%; font-weight: 1000; margin-top: 2%;">{{poll.poll_name}}</span>
-        
+        <span style="float:left; margin-left: 45%; font-weight: 1000; margin-top: 2%;">{{poll.poll_name}}</span>    
         <div>
             <button type="submit" class='fa fa-paper-plane save_btn' onclick="return confirm('Вы уверены, что хотите закончить тест?');"
                 form="group_form"></button>
+            <button id="button_submit_hide" type="submit" style="display: none" form="group_form"></button>
         </div>
 
         <div class='div-form'>
@@ -42,6 +42,39 @@
         </div>
 
     </div>
+    <script>
+            var timerShow = document.getElementById("timer");
+            var timeSeconds = {{poll.time_to_complete}} * 60;
+
+            function getFormatedTime(time)
+            {
+                if (time / 10 < 1)
+                {
+                    return '0' + time;
+                }
+                
+                return time;
+            }
+
+            setInterval(function () {
+                seconds = timeSeconds % 60;
+                minutes = timeSeconds / 60 % 60;
+                hour = timeSeconds / 60 / 60 % 60;
+
+                if (timeSeconds <= 0) {
+                    document.getElementById("button_submit_hide").click();
+                } else {
+                    
+                    let strTimer = getFormatedTime(Math.trunc(hour)) + 
+                        ':' +
+                        getFormatedTime(Math.trunc(minutes)) + 
+                        ':' +
+                        getFormatedTime(seconds);
+                    timerShow.innerHTML = strTimer;
+                }
+                --timeSeconds;
+            }, 1000)
+        </script>
 </body>
 
 {% endblock %}

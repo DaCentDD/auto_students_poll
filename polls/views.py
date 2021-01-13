@@ -285,6 +285,7 @@ def poll_create(request):
                         new_answer.is_right = ans_form.is_right
                         new_answer.save()
                 qst_id += 1
+            return redirect("/polls/")
         else:
             return render(request, 'polls/poll_create.html', {'form': form})
     form = PollForm()

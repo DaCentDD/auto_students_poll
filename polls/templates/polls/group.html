@@ -49,7 +49,7 @@
             <div>
                 <div class='delete_btn' style="width: 100%; border-radius: 0px 0px 10px 10px;">
                     <form action="/groups/group/{{group.id}}/delete">
-                        <button type="submit">УДАЛИТЬ ГРУППУ</button>
+                        <button type="submit" onclick="return confirm('Удалить группу?');">УДАЛИТЬ ГРУППУ</button>
                     </form>
                 </div>
             </div>
