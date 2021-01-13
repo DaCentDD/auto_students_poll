@@ -18,5 +18,7 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
-    attemps = models.IntegerField(blank=True, null=True)
-    block_to = models.TimeField(blank=True, null=True)
+    attemps = models.IntegerField(default=0)
+    block_to = models.DateTimeField(blank=True, null=True)
+
+

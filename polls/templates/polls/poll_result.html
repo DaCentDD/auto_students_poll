@@ -27,17 +27,21 @@
                 <hr>
                 <br>
                 <br>
-                <div style="text-align: left; margin-left: 25%;">
-                    <span style="font-weight: 1000;">Израсходовано попыток: {{result.current_attemps}}</span>
-                    <br>
-                    <span style="font-weight: 1000;">Набрано баллов: {{result.points}}</span>
-                    <br>
-                    {% if result.current_attemps > 0 %}
-                    <span style="font-weight: 1000;">Итоговая оценка: {{result.assess}}</span>
-                    {% endif %}
-                    <br>
-                    <br>
-                </div>
+                <table style="width:50%; margin-left: 25%; background-color: white; ">
+                    <tr>
+                        <th>Израсходовано попыток: <br><hr> </th>
+                        <th>{{result.current_attemps}}<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Набрано баллов: <br><hr> </th>
+                        <th>{{result.points}}<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Итоговая оценка: <br><hr> </th>
+                        <th>{{result.assess}}<br><hr> </th>
+                    </tr>
+                      
+                </table> 
                 <br>
                 {% for question in questions %}
                 {% with answers=question.question_answer.all %}          

@@ -1,0 +1,55 @@
+{% extends 'polls/base.html' %}
+
+{% load static %}
+
+{% block title %}{{student.get_full_name}}{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/poll_pass.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<body style="background-image: url('{% static 'polls/images/prism.png' %}'); background-repeat: repeat">
+    <div class='container group-form'>
+        <div class='quit_btn'>
+            <form action="/students/">
+                <button type="submit" class='fa fa-home'></button>
+            </form>
+        </div>
+
+        <span style="float:left; margin-left: 35%; font-weight: 1000; margin-top: 2%;">{{student.get_full_name}}</span>
+
+        <div class='div-form'>
+                <br>
+                <span style="float: left; margin-left: 25%; background-color: white;">Юзернейм:
+                    {{student.username}}</span>
+                <br>
+                <hr>
+                <span style="float: left; margin-left: 25%; background-color: white;">Почта: {{student.email}}</span>
+                <br>
+                <hr>
+                <span style="float: left; margin-left: 25%; background-color: white;">Группа:
+                    {{student.group_id.group_name}}</span>
+                <br>
+                <hr>
+                <span style="float: left; margin-left: 25%; background-color: white;">Пройденные тесты:</span>
+                <br>
+                <hr>
+                <table style="width:50%; margin-left: 25%; background-color: white; ">
+                    {% for poll in polls %}
+                    <tr>
+                        <th>{{poll.poll_id.poll_name}} <br><hr> </th>
+                        <th>оценка: {{poll.assess}} <br><hr> </th>
+                        <th>закончен: {% if poll.is_finished %}да {% else %} нет {% endif %} <br><hr> </th>
+                    </tr>
+                      
+                    {% endfor %}
+                </table>        
+            
+        </div>
+
+    </div>
+</body>
+
+{% endblock %}

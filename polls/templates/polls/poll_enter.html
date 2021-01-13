@@ -19,14 +19,19 @@
             </form>
         </div>
 
-
+        {% if is_active %}
         <div>
             <button type="submit" class="start_btn" onclick="return confirm('Начать тест?');" form="group_form">Начать
                 тест</button>
         </div>
 
+        {% endif %}
+        
+
         <div class='div-form'>
             <form id='group_form' action="/student_page/{{request.user.id}}/poll/{{poll.id}}" method="POST">
+                <br>
+                <br>
                 <span
                     style="margin-top:2%; margin-left: 3%; font-weight: 1000; font-size: 26pt">{{poll.poll_name}}</span>
                 <br>
@@ -38,41 +43,47 @@
                         попытки!</span>
                     <br>
                     <hr>
-
-                    <span style="font-weight: 1000;">Время на выполнение: {{poll.time_to_complete}} минут</span>
-                    <br>
-                    <hr>
-
-                    <span style="font-weight: 1000;">Количество вопросов: {{poll.poll_question.all|length}}</span>
-                    <br>
-                    <hr>
-
-                    <span style="font-weight: 1000;">Израсходовано попыток: {{result.current_attemps}}</span>
-                    <br>
-                    <hr>
-
-                    <span style="font-weight: 1000;">Всего попыток: {{poll.max_attemps}}</span>
-                    <br>
-                    <hr>
-
-                    <span style="font-weight: 1000;">Активен с {{poll.active_from}}</span>
-                    <br>
-                    <hr>
-
-                    <span style="font-weight: 1000;">Активен до {{poll.active_to}}</span>
-                    <br>
-                    <hr>
-      
+                    <table style="width:70%; margin-left: 0%; background-color: white; ">
+                    <tr>
+                        <th>Время на выполнение: <br><hr> </th>
+                        <th>{{poll.time_to_complete}} минут<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Количество вопросов: <br><hr> </th>
+                        <th>{{poll.poll_question.all|length}}<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Потрачено попыток: <br><hr> </th>
+                        <th>{{result.current_attemps}}<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Всего попыток: <br><hr> </th>
+                        <th>{{poll.max_attemps}}<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Активен с <br><hr> </th>
+                        <th>{{poll.active_from}}<br><hr> </th>
+                    </tr>
+                    <tr>
+                        <th>Активен до <br><hr> </th>
+                        <th>{{poll.active_to}}<br><hr> </th>
+                    </tr>
                     {% if result.current_attemps > 0 %}
-                    <span style="font-weight: 1000;">Последняя оценка: {{result.assess}}</span>
+                    <tr>
+                        <th>Последняя оценка: <br><hr> </th>
+                        <th>{{result.assess}}<br><hr> </th>
+                    </tr>
                     {% endif %}
+                </table>
                     <br>
                     <hr>
-
+                    {% if is_active %}
                     <div>
                         <button type="submit" class="finish_btn" onclick="return confirm('Вы действительно хотите закончить тест?');"
                             form="finish_form">Закончить тест</button>
                     </div>
+                    {% endif %}
+                    
                 </div>
                 <br>
                 <br>
