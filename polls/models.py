@@ -41,6 +41,19 @@ class PollResult(models.Model):
     points = models.IntegerField()
     assess = models.CharField(max_length=20)
 
+    def get_asses(self):
+        if self.points <= self.poll_id.assess_2:
+            self.assess = 2
+        elif self.points <= self.poll_id.assess_3:
+            self.assess = 3
+        elif self.points <= self.poll_id.assess_4:
+            self.assess = 4
+        elif self.points <= self.poll_id.assess_5:
+            self.assess = 5
+
+        
+
+
 
 class Question(models.Model):
     id = models.AutoField(primary_key=True)

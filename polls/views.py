@@ -8,6 +8,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils.functional import partition
 from django.forms import formset_factory
+from django.core.exceptions import ObjectDoesNotExist
 
 from collections import defaultdict
 
@@ -315,22 +316,39 @@ def poll_enter(request, pk, id):
     current_poll = Poll.objects.get(id=id)
     questions = []
     if request.method == 'POST':
-        new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)), points=0)
+        try:
+            new_result = PollResult.objects.get(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)))
+        except ObjectDoesNotExist:
+            new_result = PollResult(username_id=User.objects.get(id=int(pk)), poll_id=Poll.objects.get(id=int(id)), points=0, current_attemps=0)  # Создаем новый результат
         answers = request.POST.getlist('question_answer')
-        if_question_correct = defaultdict(bool)
-        for answer in answers:       
-            answer_obj = Answer.objects.get(id=int(answer))
-            if not if_question_correct.get(answer_obj.question_id.id, True):
+        if_question_correct, question_right_answers = defaultdict(bool), defaultdict(list)
+        for answer in answers:   
+            if not answer: 
+                continue    
+            answer_obj = Answer.objects.get(id=int(answer)) 
+            if not if_question_correct.get(answer_obj.question_id.id, True): # Если для вопроса уже установлен флаг "неверно"
                 continue
-            if answer_obj.question_id.many_correct is True:
-                if answer_obj.is_right:
-                    if_question_correct[answer_obj.question_id.id] = True
+            if answer_obj.question_id.many_correct is True: # Если вопрос с множеством правильных ответов
+                if not answer_obj.question_id.id in question_right_answers.keys(): # Если вопрос ещё не обрабатывался
+                    question_right_answers[answer_obj.question_id.id] = \
+                        [right_answer for right_answer in answer_obj.question_id.question_answer.all() if right_answer.is_right==True]  # Содаем список с правильными ответами 
+                if answer_obj.is_right:  # Если текущий ответ правильный
+                    if_question_correct[answer_obj.question_id.id] = True  # Устанавливаем для вопроса флаг верно  
+                    question_right_answers[answer_obj.question_id.id].remove(answer_obj) # Удаляем ответ из списка правильных вопросов
                 else:
-                    if_question_correct[answer_obj.question_id.id] = False        
-            else:
+                    if_question_correct[answer_obj.question_id.id] = False  # Если ответ неправильный, то весь вопрос считается не отвеченным
+            else: # Если правильный ответ один, то добавляем баллов за вопрос
                 if answer_obj.is_right:
                     new_result.points += answer_obj.question_id.points_for_question
-        print(if_question_correct)
+        for question_id, is_right in if_question_correct.items(): # Проверяем результаты обработки вопросов с несколькими праввильными ответами
+            if question_id in question_right_answers.keys(): # Проверяем на то, все ли правильные вопросы были выбраны
+                if len(question_right_answers[question_id]) > 0: # Если какой-то правильный ответ не выбран, то баллов не даем
+                    continue
+            if is_right: # Иначе добавляем баллов
+                new_result.points += Question.objects.get(id=question_id).points_for_question
+        new_result.current_attemps += 1
+        new_result.get_asses()
+        new_result.save()
         
     for question in current_poll.poll_question.all():
         form = PassQuestionForm(instance=question)

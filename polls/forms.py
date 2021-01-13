@@ -35,7 +35,7 @@ class QuestionForm(forms.ModelForm):
 class PassQuestionForm(forms.ModelForm):
     question_text = forms.CharField(disabled=True, widget=forms.TextInput)
     points_for_question = forms.IntegerField(disabled=True)
-    question_answer = forms.ModelChoiceField(queryset=Answer.objects.all(), widget=forms.Select(attrs={"class":"form-control", "size":"1"}))
+    question_answer = forms.ModelChoiceField(queryset=Answer.objects.all(), widget=forms.Select(attrs={"class":"form-control", "size":"1"}), required=False)
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
